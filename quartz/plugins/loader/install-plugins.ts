@@ -12,7 +12,11 @@ async function main() {
   const configFile = fs.readFileSync(configPath, "utf-8")
   const quartzConfig = YAML.parse(configFile)
   
-  const externalPlugins = quartzConfig.externalPlugins || []
+  // Parse external plugins from raw plugins list (e.g. source: github:...)
+  const rawPlugins = quartzConfig.plugins || []
+  const externalPlugins = rawPlugins
+    .filter((p: any) => p && p.source && p.source.startsWith("github:"))
+    .map((p: any) => p.source)
 
   // Ensure .quartz/plugins directory and stub index.ts always exist
   const pluginsDir = path.resolve(__dirname, "../../../.quartz/plugins")
