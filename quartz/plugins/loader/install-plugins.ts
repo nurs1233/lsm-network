@@ -14,6 +14,16 @@ async function main() {
   
   const externalPlugins = quartzConfig.externalPlugins || []
 
+  // Ensure .quartz/plugins directory and stub index.ts always exist
+  const pluginsDir = path.resolve(__dirname, "../../../.quartz/plugins")
+  if (!fs.existsSync(pluginsDir)) {
+    fs.mkdirSync(pluginsDir, { recursive: true })
+  }
+  const indexPath = path.join(pluginsDir, "index.ts")
+  if (!fs.existsSync(indexPath)) {
+    fs.writeFileSync(indexPath, "export const plugins = {}\n")
+  }
+
   if (externalPlugins.length === 0) {
     console.log("No external plugins to install.")
     return
